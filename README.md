@@ -1,95 +1,136 @@
-# Projeto de Sistema de Login (FastAPI + PHP + PostgreSQL)
+# Login Project - Sistema de Login com FastAPI e PHP
 
-Este projeto é um sistema de login simples que combina backend em **FastAPI (Python)**, frontend em **PHP** e banco de dados **PostgreSQL**. O objetivo é demonstrar a integração entre tecnologias distintas e boas práticas de autenticação.
+Este projeto implementa um sistema de login simples, com um backend desenvolvido em FastAPI (Python) e um frontend em PHP. Ele demonstra a integração entre as duas tecnologias para autenticação de usuários.
 
----
+## Visão Geral
 
-## 🚀 Tecnologias Utilizadas
+O projeto consiste em duas partes principais:
 
-- **Python 3.10+**
-- **FastAPI**
-- **PHP 7.4+**
-- **PostgreSQL (via Docker)**
-- **Docker Compose**
-- **JWT para autenticação**
-- **HTML/CSS (Frontend básico)**
+* **Backend (FastAPI):** Responsável por gerenciar as rotas da API, incluindo a autenticação de usuários.
+* **Frontend (PHP):** Interface de usuário para o formulário de login.
 
----
+## Tecnologias Utilizadas
 
-## 📦 Estrutura do Projeto
+* **Python** (versão 3.10 ou superior) [cite: 4]
+* **FastAPI**
+* **PHP** (versão 7.4 ou superior) [cite: 4]
+* **PostgreSQL** (via Docker)
+* **Docker** e **Docker Compose**
+* **pip** (gerenciador de pacotes Python, instalado junto com Python) [cite: 4]
+* **PyJWT** [cite: 7]
 
-projeto_login/
-├── backend/ # FastAPI + lógica de autenticação
-├── frontend/ # Interface PHP simples
-├── docker-compose.yml
-├── init.sql # Script de criação do banco e tabela users
-├── guia_execucao_login_project.docx
-└── README.md
+## Pré-requisitos
 
-yaml
-Copiar
-Editar
+Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 
----
+* [Python 3.10 ou superior](https://www.python.org/downloads/) [cite: 4]
+* [PHP 7.4 ou superior](https://windows.php.net/download) [cite: 4]
+* [Docker Desktop](https://www.docker.com/products/docker-desktop) (que inclui Docker Compose)
 
-## 🐳 Executando o PostgreSQL com Docker
+## Configuração do Banco de Dados (PostgreSQL com Docker Compose)
 
-Certifique-se de ter o [Docker](https://www.docker.com/products/docker-desktop/) instalado. Depois:
+Para facilitar a configuração do banco de dados PostgreSQL, utilize o Docker Compose. O setup já inclui a criação da tabela `users` e um usuário inicial.
 
-```bash
-docker-compose up -d
-Isso iniciará o PostgreSQL com o banco seu_banco e a tabela users já criada com um usuário de teste:
+1.  Navegue até a pasta `postgres_seu_banco` dentro do seu projeto.
+2.  Crie um arquivo chamado `docker-compose.yml` e adicione o seguinte conteúdo:
 
-Usuário: admin
+    ```yaml
+    version: '3.8'
+    services:
+      db:
+        image: postgres:latest
+        container_name: postgres_seu_banco
+        restart: unless-stopped
+        environment:
+          POSTGRES_DB: seu_banco
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password  # você pode trocar aqui
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+          - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+        ports:
+          - "5432:5432"
+    volumes:
+      pgdata:
+    ```
 
-Senha: admin123
+3.  No **mesmo diretório** da pasta `postgres_seu_banco`, crie um arquivo chamado `init.sql` e adicione o seguinte conteúdo:
 
-⚙️ Executando o Backend (FastAPI)
-Vá para a pasta backend:
+    ```sql
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        "user" VARCHAR NOT NULL UNIQUE,
+        password VARCHAR NOT NULL
+    );
+    INSERT INTO users (id, "user", password) VALUES
+    (1, 'admin', 'admin123')
+    ON CONFLICT DO NOTHING;
+    ```
 
-bash
-Copiar
-Editar
-cd projeto_login/backend
-Crie e ative um ambiente virtual:
+4.  Para iniciar o contêiner do PostgreSQL, execute o seguinte comando na pasta `postgres_seu_banco`:
+    ```bash
+    docker-compose up -d
+    ```
+    Este comando irá baixar a imagem do PostgreSQL, criar e iniciar o contêiner, e executar o script `init.sql` para configurar a tabela `users` e inserir um usuário inicial.
 
-bash
-Copiar
-Editar
-python -m venv venv
-venv\Scripts\activate  # No Windows
-Instale as dependências:
+## Extração do Projeto
 
-bash
-Copiar
-Editar
-pip install -r ../requirements.txt
-Execute o servidor:
+1.  Extraia o arquivo `login_project.zip` para uma pasta de sua escolha. [cite: 1, 4]
+    Exemplo: `C:\meu_projeto\login_project` [cite: 2, 5]
 
-bash
-Copiar
-Editar
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
-🌐 Executando o Frontend (PHP)
-Em outra janela do terminal, vá para a pasta frontend:
+## Executando o Backend (FastAPI)
 
-bash
-Copiar
-Editar
-cd projeto_login/frontend
-Execute o servidor PHP:
+1.  Abra o terminal CMD e navegue até a pasta `backend`:
+    ```bash
+    cd C:\meu_projeto\login_project\backend
+    ```
+2.  Crie um ambiente virtual: [cite: 6]
+    ```bash
+    python -m venv venv
+    ```
+3.  Ative o ambiente virtual: [cite: 6]
+    ```bash
+    venv\Scripts\activate
+    ```
+4.  Instale as dependências: [cite: 7]
+    ```bash
+    pip install -r ..\requirements.txt
+    pip install PyJWT
+    ```
+5.  Inicie o servidor FastAPI: [cite: 7]
+    ```bash
+    uvicorn main:app --reload --host 127.0.0.1 --port 8000
+    ```
 
-bash
-Copiar
-Editar
-php -S localhost:8080
-🧪 Acessos e Testes
-Login Web: http://localhost:8080/login.php
+## Executando o Frontend (PHP)
 
-API Docs (Swagger): http://localhost:8000/docs
+1.  Em outra janela do CMD, vá para a pasta `frontend`: [cite: 8]
+    ```bash
+    cd C:\meu_projeto\login_project\frontend
+    ```
+2.  Inicie o servidor PHP: [cite: 8]
+    ```bash
+    php -S localhost:8080
+    ```
 
-🛡️ Segurança
-A senha no banco está em texto simples por fins didáticos. Use hash (bcrypt) em ambientes reais.
+## Acessos e Testes
 
-📄 Licença
-Este projeto é livre para fins educacionais. Personalize à vontade.
+Após iniciar ambos os servidores e o contêiner do PostgreSQL, você pode acessar:
+
+* **Formulário de Login:** `http://localhost:8080/login.php` [cite: 3, 8]
+* **Documentação da API FastAPI:** `http://localhost:8000/docs` [cite: 3, 8]
+
+### Credenciais de Teste
+
+Utilize as seguintes credenciais para testar o login (já inseridas via `init.sql` no Docker Compose):
+
+* **Usuário:** `admin` [cite: 3, 8]
+* **Senha:** `admin123` [cite: 3, 8]
+
+## Contribuição
+
+Sinta-se à vontade para contribuir com este projeto. Por favor, crie uma "issue" para quaisquer sugestões ou bugs encontrados, ou envie um "pull request" com suas melhorias.
+
+## Licença
+
+Este projeto está licenciado sob a licença [MIT](https://opensource.org/licenses/MIT).
