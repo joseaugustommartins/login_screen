@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pydantic
+python-jose
+uvicorn
+psycopg2-binary

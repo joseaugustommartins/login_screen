@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_seu_banco
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: seu_banco
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin  # você pode trocar aqui
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
