@@ -1,136 +1,175 @@
-# Login Project - Sistema de Login com FastAPI e PHP
+# Sistema de Login com PHP, Python e PostgreSQL
 
-Este projeto implementa um sistema de login simples, com um backend desenvolvido em FastAPI (Python) e um frontend em PHP. Ele demonstra a integração entre as duas tecnologias para autenticação de usuários.
-
-## Visão Geral
-
-O projeto consiste em duas partes principais:
-
-* **Backend (FastAPI):** Responsável por gerenciar as rotas da API, incluindo a autenticação de usuários.
-* **Frontend (PHP):** Interface de usuário para o formulário de login.
-
-## Tecnologias Utilizadas
-
-* **Python** (versão 3.10 ou superior) [cite: 4]
-* **FastAPI**
-* **PHP** (versão 7.4 ou superior) [cite: 4]
-* **PostgreSQL** (via Docker)
-* **Docker** e **Docker Compose**
-* **pip** (gerenciador de pacotes Python, instalado junto com Python) [cite: 4]
-* **PyJWT** [cite: 7]
+Este é um sistema de login completo utilizando PHP para o frontend, Python para o backend e PostgreSQL como banco de dados. Todo o sistema roda em containers Docker, tornando fácil a configuração e execução.
 
 ## Pré-requisitos
 
-Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
+Antes de começar, você precisa ter instalado em sua máquina:
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Git](https://git-scm.com/downloads) (opcional)
 
-* [Python 3.10 ou superior](https://www.python.org/downloads/) [cite: 4]
-* [PHP 7.4 ou superior](https://windows.php.net/download) [cite: 4]
-* [Docker Desktop](https://www.docker.com/products/docker-desktop) (que inclui Docker Compose)
+## Estrutura do Projeto
 
-## Configuração do Banco de Dados (PostgreSQL com Docker Compose)
+```
+sql_php/
+├── docker-compose.yml
+├── postgres_seu_banco/
+│   └── init.sql
+└── projeto_login/
+    ├── frontend/
+    │   ├── css/
+    │   │   └── style.css
+    │   ├── index.php
+    │   ├── dashboard.php
+    │   └── logout.php
+    └── backend/
+        ├── requirements.txt
+        ├── database.py
+        └── main.py
+```
 
-Para facilitar a configuração do banco de dados PostgreSQL, utilize o Docker Compose. O setup já inclui a criação da tabela `users` e um usuário inicial.
+## Como Usar
 
-1.  Navegue até a pasta `postgres_seu_banco` dentro do seu projeto.
-2.  Crie um arquivo chamado `docker-compose.yml` e adicione o seguinte conteúdo:
+1. **Clone o repositório ou baixe os arquivos**
+   ```bash
+   git clone <url-do-repositorio>
+   cd Tela_Login
+   ```
 
-    ```yaml
-    version: '3.8'
-    services:
-      db:
-        image: postgres:latest
-        container_name: postgres_seu_banco
-        restart: unless-stopped
-        environment:
-          POSTGRES_DB: seu_banco
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres_password  # você pode trocar aqui
-        volumes:
-          - pgdata:/var/lib/postgresql/data
-          - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-        ports:
-          - "5432:5432"
-    volumes:
-      pgdata:
-    ```
+2. **Inicie o Docker Desktop**
+   - Abra o Docker Desktop
+   - Aguarde até que o ícone do Docker na barra de tarefas mostre "Docker Desktop is running"
 
-3.  No **mesmo diretório** da pasta `postgres_seu_banco`, crie um arquivo chamado `init.sql` e adicione o seguinte conteúdo:
+3. **Configure os arquivos**
+   - Certifique-se de que todos os arquivos estão nos diretórios corretos conforme a estrutura acima
+   - Verifique se o arquivo `docker-compose.yml` está na pasta `sql_php`
 
-    ```sql
-    CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        "user" VARCHAR NOT NULL UNIQUE,
-        password VARCHAR NOT NULL
-    );
-    INSERT INTO users (id, "user", password) VALUES
-    (1, 'admin', 'admin123')
-    ON CONFLICT DO NOTHING;
-    ```
+4. **Inicie os containers**
+   ```bash
+   cd sql_php
+   docker-compose down -v    # Para remover containers e volumes antigos
+   docker-compose up -d      # Para iniciar todos os serviços
+   ```
 
-4.  Para iniciar o contêiner do PostgreSQL, execute o seguinte comando na pasta `postgres_seu_banco`:
-    ```bash
-    docker-compose up -d
-    ```
-    Este comando irá baixar a imagem do PostgreSQL, criar e iniciar o contêiner, e executar o script `init.sql` para configurar a tabela `users` e inserir um usuário inicial.
+5. **Acesse o sistema**
+   - Frontend (Tela de Login): http://localhost:8000
+   - Backend Python: http://localhost:8001
+   - Adminer (Gerenciador do Banco): http://localhost:8080
 
-## Extração do Projeto
+6. **Credenciais padrão**
+   - Para a tela de login:
+     - Usuário: admin
+     - Senha: admin123
 
-1.  Extraia o arquivo `login_project.zip` para uma pasta de sua escolha. [cite: 1, 4]
-    Exemplo: `C:\meu_projeto\login_project` [cite: 2, 5]
+   - Para o Adminer (gerenciador do banco):
+     - Sistema: PostgreSQL
+     - Servidor: db
+     - Usuário: postgres
+     - Senha: admin
+     - Base de dados: seu_banco
 
-## Executando o Backend (FastAPI)
+## Serviços Disponíveis
 
-1.  Abra o terminal CMD e navegue até a pasta `backend`:
-    ```bash
-    cd C:\meu_projeto\login_project\backend
-    ```
-2.  Crie um ambiente virtual: [cite: 6]
-    ```bash
-    python -m venv venv
-    ```
-3.  Ative o ambiente virtual: [cite: 6]
-    ```bash
-    venv\Scripts\activate
-    ```
-4.  Instale as dependências: [cite: 7]
-    ```bash
-    pip install -r ..\requirements.txt
-    pip install PyJWT
-    ```
-5.  Inicie o servidor FastAPI: [cite: 7]
-    ```bash
-    uvicorn main:app --reload --host 127.0.0.1 --port 8000
-    ```
+### Frontend (PHP)
+- Porta: 8000
+- Funcionalidades:
+  - Tela de login responsiva
+  - Validação de usuário
+  - Dashboard protegido
+  - Sistema de sessão
+  - Logout
 
-## Executando o Frontend (PHP)
+### Backend (Python)
+- Porta: 8001
+- Funcionalidades:
+  - API REST
+  - Conexão com PostgreSQL
+  - Gerenciamento de usuários
 
-1.  Em outra janela do CMD, vá para a pasta `frontend`: [cite: 8]
-    ```bash
-    cd C:\meu_projeto\login_project\frontend
-    ```
-2.  Inicie o servidor PHP: [cite: 8]
-    ```bash
-    php -S localhost:8080
-    ```
+### Banco de Dados (PostgreSQL)
+- Porta: 5432
+- Configurações:
+  - Database: seu_banco
+  - Usuário: postgres
+  - Senha: admin
 
-## Acessos e Testes
+### Adminer
+- Porta: 8080
+- Interface web para gerenciar o banco de dados
 
-Após iniciar ambos os servidores e o contêiner do PostgreSQL, você pode acessar:
+## Comandos Úteis
 
-* **Formulário de Login:** `http://localhost:8080/login.php` [cite: 3, 8]
-* **Documentação da API FastAPI:** `http://localhost:8000/docs` [cite: 3, 8]
+1. **Iniciar os serviços**
+   ```bash
+   docker-compose up -d
+   ```
 
-### Credenciais de Teste
+2. **Parar os serviços**
+   ```bash
+   docker-compose down
+   ```
 
-Utilize as seguintes credenciais para testar o login (já inseridas via `init.sql` no Docker Compose):
+3. **Reiniciar do zero (remove volumes)**
+   ```bash
+   docker-compose down -v
+   docker-compose up -d
+   ```
 
-* **Usuário:** `admin` [cite: 3, 8]
-* **Senha:** `admin123` [cite: 3, 8]
+4. **Ver logs dos containers**
+   ```bash
+   # Todos os containers
+   docker-compose logs
 
-## Contribuição
+   # Container específico
+   docker-compose logs php
+   docker-compose logs python_backend
+   docker-compose logs db
+   ```
 
-Sinta-se à vontade para contribuir com este projeto. Por favor, crie uma "issue" para quaisquer sugestões ou bugs encontrados, ou envie um "pull request" com suas melhorias.
+5. **Verificar status dos containers**
+   ```bash
+   docker-compose ps
+   ```
 
-## Licença
+## Solução de Problemas
 
-Este projeto está licenciado sob a licença [MIT](https://opensource.org/licenses/MIT).
+1. **Erro de conexão com o banco**
+   - Verifique se o Docker Desktop está rodando
+   - Tente reiniciar os containers com `docker-compose down -v` seguido de `docker-compose up -d`
+
+2. **Página não carrega**
+   - Verifique se todos os containers estão rodando com `docker-compose ps`
+   - Verifique os logs com `docker-compose logs`
+
+3. **Erro de login**
+   - Verifique se está usando as credenciais corretas
+   - Verifique se o banco de dados foi inicializado corretamente através do Adminer
+
+## Personalizando
+
+1. **Adicionar novo usuário**
+   - Acesse o Adminer (http://localhost:8080)
+   - Faça login com as credenciais do PostgreSQL
+   - Selecione a tabela "users"
+   - Clique em "Novo item" e adicione os dados do usuário
+
+2. **Modificar o estilo**
+   - Edite o arquivo `frontend/css/style.css`
+
+3. **Alterar configurações do banco**
+   - Modifique as variáveis de ambiente no `docker-compose.yml`
+   - Atualize o arquivo `init.sql` conforme necessário
+
+## Segurança
+
+- As senhas no banco de dados devem ser armazenadas com hash
+- Mantenha as credenciais do banco seguras
+- Não exponha as portas dos serviços diretamente à internet
+- Use HTTPS em produção
+
+## Suporte
+
+Em caso de dúvidas ou problemas:
+1. Verifique os logs dos containers
+2. Consulte a documentação do Docker
+3. Verifique as configurações do seu ambiente
