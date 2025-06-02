@@ -1,0 +1,65 @@
+services:
+  php:
+    image: php:8.2-cli
+    container_name: php_app
+    volumes:
+      - ./projeto_login/frontend:/app
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=seu_banco
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    command: >
+      sh -c "apt-get update && 
+             apt-get install -y libpq-dev && 
+             docker-php-ext-install pdo pdo_pgsql && 
+             php -S 0.0.0.0:8000"
+
+  python_backend:
+    image: python:3.9
+    container_name: python_backend
+    volumes:
+      - ./projeto_login/backend:/app
+    working_dir: /app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=seu_banco
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    command: >
+      sh -c "pip install -r requirements.txt &&
+             uvicorn main:app --host 0.0.0.0 --port 8001"
+
+  db:
+    image: postgres:latest
+    container_name: postgres_seu_banco
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: seu_banco
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres_seu_banco/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  pgdata: 
