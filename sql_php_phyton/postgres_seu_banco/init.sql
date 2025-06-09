@@ -11,3 +11,22 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT INTO users (username, password, email) 
 VALUES ('admin', 'admin123', 'admin@exemplo.com')
 ON CONFLICT DO NOTHING;
+
+-- =====================================
+-- Criação da tabela produtos
+CREATE TABLE IF NOT EXISTS produtos (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    descricao TEXT,
+    imagem TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Produto de exemplo
+INSERT INTO produtos (nome, preco, descricao)
+VALUES (
+    'Produto1',
+    399.90,
+    'Teste.')
+ON CONFLICT DO NOTHING;
