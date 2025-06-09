@@ -24,7 +24,7 @@ $response = json_decode($result, true);
 if (isset($response['access_token'])) {
     session_start();
     $_SESSION['token'] = $response['access_token'];
-    header('Location: dashboard.php');
+    header('Location: product.php');
 } else {
     header("Location: login.php?error=1");
 }
