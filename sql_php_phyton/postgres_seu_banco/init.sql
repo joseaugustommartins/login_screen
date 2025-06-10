@@ -11,3 +11,11 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT INTO users (username, password, email) 
 VALUES ('admin', 'admin123', 'admin@exemplo.com')
 ON CONFLICT DO NOTHING;
+
+-- Criação da tabela clientes
+CREATE TABLE IF NOT EXISTS clientes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    telefone VARCHAR(20)
+);
