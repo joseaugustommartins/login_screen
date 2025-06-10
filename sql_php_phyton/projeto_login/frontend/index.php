@@ -31,7 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $success_message = "Login realizado com sucesso!";
-            header("refresh:2;url=dashboard.php");
+            header("Location: produtos.php");
+            exit;
         } else {
             $error_message = "Usuário ou senha incorretos!";
         }
@@ -82,4 +83,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 </body>
-</html> 
+</html>
