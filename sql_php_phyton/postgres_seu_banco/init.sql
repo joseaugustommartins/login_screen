@@ -13,14 +13,13 @@ VALUES ('admin', 'admin123', 'admin@exemplo.com')
 ON CONFLICT DO NOTHING;
 
 -- =====================================
--- Criação da tabela produtos
+-- Criação da tabela produtos (ajustada para CRUD de produtos.php)
 CREATE TABLE IF NOT EXISTS produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    preco DECIMAL(10,2) NOT NULL,
     descricao TEXT,
-    imagem TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    marca VARCHAR(100),
+    valor DECIMAL(10,2) NOT NULL
 );
 
 -- Produto de exemplo
