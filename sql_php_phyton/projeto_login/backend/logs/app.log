@@ -1,3 +1,15 @@
 2025-05-28 21:08:39,700 - INFO - Login realizado: admin
 2025-05-28 21:12:55,767 - INFO - Login realizado: admin
 2025-05-28 21:14:14,769 - WARNING - Tentativa de login falhou: admin
+2025-06-10 01:32:25,404 - ERROR - Erro em /produtos/: relation "produtos" does not exist
+LINE 1: SELECT * FROM produtos
+                      ^
+
+2025-06-10 01:32:57,733 - ERROR - Erro em /produtos/: relation "produtos" does not exist
+LINE 1: SELECT * FROM produtos
+                      ^
+
+2025-06-10 01:34:32,165 - ERROR - Erro em /produtos/: relation "produtos" does not exist
+LINE 1: SELECT * FROM produtos
+                      ^
+
