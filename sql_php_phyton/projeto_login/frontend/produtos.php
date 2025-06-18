@@ -95,6 +95,39 @@ if ($search && is_array($produtos)) {
         .btn-add { background: #4e54c8; color: #fff; margin-bottom: 1rem; }
         .success-message { color: green; margin-bottom: 1rem; }
         .error-message { color: red; margin-bottom: 1rem; }
+        @media (max-width: 900px) {
+            .login-container { padding: 10px; }
+            .produtos-table, .produtos-table thead, .produtos-table tbody, .produtos-table th, .produtos-table td, .produtos-table tr {
+                display: block;
+                width: 100%;
+            }
+            .produtos-table thead { display: none; }
+            .produtos-table tr { margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; background: #fff; box-shadow: 0 2px 6px #0001; }
+            .produtos-table td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 50%;
+                min-height: 40px;
+            }
+            .produtos-table td:before {
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                width: 45%;
+                white-space: nowrap;
+                font-weight: bold;
+                color: #4e54c8;
+            }
+            .produtos-table td:nth-child(1):before { content: 'ID'; }
+            .produtos-table td:nth-child(2):before { content: 'Nome'; }
+            .produtos-table td:nth-child(3):before { content: 'Descrição'; }
+            .produtos-table td:nth-child(4):before { content: 'Marca'; }
+            .produtos-table td:nth-child(5):before { content: 'Valor'; }
+            .produtos-table td:nth-child(6):before { content: 'Ações'; }
+            .form-inline { flex-direction: column; }
+            .form-inline input, .form-inline button { width: 100%; margin: 4px 0; }
+        }
     </style>
 </head>
 <body>
