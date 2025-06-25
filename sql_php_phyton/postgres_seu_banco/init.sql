@@ -15,7 +15,7 @@ ON CONFLICT DO NOTHING;
 -- Criação da tabela clientes
 CREATE TABLE IF NOT EXISTS clientes (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    telefone VARCHAR(20)
+    nome VARCHAR(100) NOT NULL CHECK (char_length(nome) >= 10),
+    email VARCHAR(100) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    telefone VARCHAR(20) CHECK (telefone ~ '^[0-9]{11,}$')
 );
