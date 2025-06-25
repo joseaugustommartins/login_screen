@@ -25,6 +25,21 @@ function call_api($method, $url, $data = null, $token = null) {
     ];
 }
 
+function validar_campos($nome, $email, $telefone) {
+    $nome = trim($nome);
+    $telefone = preg_replace('/\D/', '', $telefone); // Remove não dígitos
+    if (mb_strlen($nome) < 10) {
+        return 'O nome deve ter no mínimo 10 caracteres.';
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return 'O email informado não é válido.';
+    }
+    if (strlen($telefone) < 11) {
+        return 'O telefone deve ter no mínimo 11 dígitos.';
+    }
+    return '';
+}
+
 // Troque para o nome do serviço do backend no Docker Compose
 define('API_HOST', 'python_backend');
 $api_url = 'http://' . API_HOST . ':8001/clientes';
@@ -34,26 +49,36 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 // CRUD Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add'])) {
-        $response = call_api('POST', $api_url . '/', [
-            'nome' => $_POST['nome'],
-            'email' => $_POST['email'],
-            'telefone' => $_POST['telefone']
-        ], $token);
-        if (strpos($response['status'], '201') !== false || strpos($response['status'], '200') !== false) {
-            $mensagem = 'Cliente adicionado com sucesso!';
-            header('Location: clientes.php?msg=' . urlencode($mensagem));
-            exit;
+        $erro_validacao = validar_campos($_POST['nome'], $_POST['email'], $_POST['telefone']);
+        if ($erro_validacao) {
+            $mensagem_erro = $erro_validacao;
         } else {
-            $mensagem_erro = $response['data']['detail'] ?? 'Erro ao adicionar cliente.';
+            $response = call_api('POST', $api_url . '/', [
+                'nome' => $_POST['nome'],
+                'email' => $_POST['email'],
+                'telefone' => $_POST['telefone']
+            ], $token);
+            if (strpos($response['status'], '201') !== false || strpos($response['status'], '200') !== false) {
+                $mensagem = 'Cliente adicionado com sucesso!';
+                header('Location: clientes.php?msg=' . urlencode($mensagem));
+                exit;
+            } else {
+                $mensagem_erro = $response['data']['detail'] ?? 'Erro ao adicionar cliente.';
+            }
         }
     } elseif (isset($_POST['edit'])) {
-        call_api('PUT', $api_url . '/' . $_POST['id'], [
-            'nome' => $_POST['nome'],
-            'email' => $_POST['email'],
-            'telefone' => $_POST['telefone']
-        ], $token);
-        header('Location: clientes.php');
-        exit;
+        $erro_validacao = validar_campos($_POST['nome'], $_POST['email'], $_POST['telefone']);
+        if ($erro_validacao) {
+            $mensagem_erro = $erro_validacao;
+        } else {
+            call_api('PUT', $api_url . '/' . $_POST['id'], [
+                'nome' => $_POST['nome'],
+                'email' => $_POST['email'],
+                'telefone' => $_POST['telefone']
+            ], $token);
+            header('Location: clientes.php');
+            exit;
+        }
     } elseif (isset($_POST['delete'])) {
         call_api('DELETE', $api_url . '/' . $_POST['id'], null, $token);
         header('Location: clientes.php');
