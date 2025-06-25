@@ -31,30 +31,57 @@ function call_api($method, $url, $data = null, $token = null) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add'])) {
-        $response = call_api('POST', $api_url . '/', [
-            'nome' => $_POST['nome'],
-            'descricao' => $_POST['descricao'],
-            'marca' => $_POST['marca'],
-            'valor' => floatval($_POST['valor'])
-        ], $token);
-        if (strpos($response['status'], '201') !== false || strpos($response['status'], '200') !== false) {
-            $mensagem = 'Produto adicionado com sucesso!';
-            header('Location: produtos.php?msg=' . urlencode($mensagem));
-            exit;
-        } else {
-            $mensagem_erro = $response['data']['detail'] ?? 'Erro ao adicionar produto.';
+    // Validação dos campos
+    $erros = [];
+    $nome = isset($_POST['nome']) ? trim($_POST['nome']) : '';
+    $descricao = isset($_POST['descricao']) ? trim($_POST['descricao']) : '';
+    $marca = isset($_POST['marca']) ? trim($_POST['marca']) : '';
+    $valor = isset($_POST['valor']) ? floatval($_POST['valor']) : null;
+
+    if (isset($_POST['add']) || isset($_POST['edit'])) {
+        if ($nome === '' || strlen($nome) < 10) {
+            $erros[] = 'O nome deve ter no mínimo 10 caracteres.';
         }
-    } elseif (isset($_POST['edit'])) {
-        call_api('PUT', $api_url . '/' . $_POST['id'], [
-            'nome' => $_POST['nome'],
-            'descricao' => $_POST['descricao'],
-            'marca' => $_POST['marca'],
-            'valor' => floatval($_POST['valor'])
-        ], $token);
-        header('Location: produtos.php');
-        exit;
-    } elseif (isset($_POST['delete'])) {
+        if ($descricao === '' || strlen($descricao) < 20) {
+            $erros[] = 'A descrição deve ter no mínimo 20 caracteres.';
+        }
+        if ($marca === '' || strlen($marca) < 5) {
+            $erros[] = 'A marca deve ter no mínimo 5 caracteres.';
+        }
+        if ($valor === null || $valor <= 1000) {
+            $erros[] = 'O valor deve ser maior que 1000.';
+        }
+    }
+
+    if (empty($erros)) {
+        if (isset($_POST['add'])) {
+            $response = call_api('POST', $api_url . '/', [
+                'nome' => $nome,
+                'descricao' => $descricao,
+                'marca' => $marca,
+                'valor' => $valor
+            ], $token);
+            if (strpos($response['status'], '201') !== false || strpos($response['status'], '200') !== false) {
+                $mensagem = 'Produto adicionado com sucesso!';
+                header('Location: produtos.php?msg=' . urlencode($mensagem));
+                exit;
+            } else {
+                $mensagem_erro = $response['data']['detail'] ?? 'Erro ao adicionar produto.';
+            }
+        } elseif (isset($_POST['edit'])) {
+            call_api('PUT', $api_url . '/' . $_POST['id'], [
+                'nome' => $nome,
+                'descricao' => $descricao,
+                'marca' => $marca,
+                'valor' => $valor
+            ], $token);
+            header('Location: produtos.php');
+            exit;
+        }
+    } else {
+        $mensagem_erro = implode('<br>', $erros);
+    }
+    if (isset($_POST['delete'])) {
         call_api('DELETE', $api_url . '/' . $_POST['id'], null, $token);
         header('Location: produtos.php');
         exit;
