@@ -62,8 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'valor' => $valor
             ], $token);
             if (strpos($response['status'], '201') !== false || strpos($response['status'], '200') !== false) {
-                $mensagem = 'Produto adicionado com sucesso!';
-                header('Location: produtos.php?msg=' . urlencode($mensagem));
+                header('Location: produtos.php?msg=' . urlencode('Produto adicionado com sucesso!'));
                 exit;
             } else {
                 $mensagem_erro = $response['data']['detail'] ?? 'Erro ao adicionar produto.';
@@ -79,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     } else {
-        $mensagem_erro = implode('<br>', $erros);
+        $mensagem_erro = $erros; // Passa o array para exibir em lista
     }
     if (isset($_POST['delete'])) {
         call_api('DELETE', $api_url . '/' . $_POST['id'], null, $token);
@@ -160,11 +159,21 @@ if ($search && is_array($produtos)) {
 <body>
     <div class="login-container" style="max-width:1000px;">
         <h2>Produtos</h2>
-        <?php if ($mensagem): ?>
+        <?php if ($mensagem && empty($mensagem_erro)): // Só mostra sucesso se não houver erro ?>
             <div class="success-message"><?php echo htmlspecialchars($mensagem); ?></div>
         <?php endif; ?>
         <?php if ($mensagem_erro): ?>
-            <div class="error-message"><?php echo htmlspecialchars($mensagem_erro); ?></div>
+            <?php if (is_array($mensagem_erro) && count($mensagem_erro) > 0): ?>
+                <div class="error-message">
+                    <ul>
+                        <?php foreach ($mensagem_erro as $erro): ?>
+                            <li><?php echo htmlspecialchars($erro); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php else: ?>
+                <div class="error-message"><?php echo htmlspecialchars($mensagem_erro); ?></div>
+            <?php endif; ?>
         <?php endif; ?>
         <form method="POST" class="form-inline">
             <input type="text" name="nome" placeholder="Nome" required>
